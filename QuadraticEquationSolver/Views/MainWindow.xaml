@@ -14,6 +14,8 @@
         <StackPanel Margin="20">
             <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="{Binding TitleLength, StringFormat='Title length: {0} characters'}"/>
+            <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding UserName, StringFormat='User name : {0}'}"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
-﻿using QuadraticEquationSolver.ViewModels.Base;
+﻿using System;
+using QuadraticEquationSolver.ViewModels.Base;
 
 namespace QuadraticEquationSolver.ViewModels
 {
@@ -30,5 +31,11 @@ namespace QuadraticEquationSolver.ViewModels
         #endregion
 
         public int TitleLength => Title.Length;
+
+        public string UserName
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
     }
 }
