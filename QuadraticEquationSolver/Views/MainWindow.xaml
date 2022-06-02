@@ -67,5 +67,9 @@
                 </TextBlock>
             </UniformGrid>
         </StackPanel>
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Show child window"
+                Margin="5" Padding="10,5" Command="{Binding ShowChildWindowCommand}"/>
+        <TextBox HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5"
+                 Width="120" Text="{Binding StringValue, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </Window>

@@ -1,0 +1,24 @@
+﻿<Window x:Class="QuadraticEquationSolver.Views.ChildWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:l="clr-namespace:QuadraticEquationSolver.Views"
+        xmlns:vm="clr-namespace:QuadraticEquationSolver.ViewModels"
+        d:DataContext="{d:DesignInstance vm:ChildWindowViewModel, IsDesignTimeCreatable=True}"
+        Title="ChildWindow" 
+        Width="230" Height="160">
+    <Grid>
+        <DockPanel VerticalAlignment="Top" Margin="5">
+            <TextBlock Text="Child value:"/>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding StringValueLength}"/>
+            <TextBox Text="{Binding StringValue, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="5,0"/>
+        </DockPanel>
+        <DockPanel VerticalAlignment="Bottom" Margin="5">
+            <TextBlock Text="Base value:"/>
+            <TextBox Text="{Binding BaseViewModelValue, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="5,0"/>
+        </DockPanel>
+    </Grid>
+</Window>

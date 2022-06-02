@@ -1,14 +1,38 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
 using QuadraticEquationSolver.Infrastructure.Attributes;
+using QuadraticEquationSolver.Infrastructure.Commands;
 using QuadraticEquationSolver.Models;
 using QuadraticEquationSolver.ViewModels.Base;
+using QuadraticEquationSolver.Views;
 
 namespace QuadraticEquationSolver.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
         private readonly QuadraticEquation _quadraticEquation = new();
+
+        #region StringValue : string - Некоторое строковое значение
+
+        /// <summary>
+        /// Некоторое строковое значение.
+        /// </summary>
+        private string _stringValue;
+
+        /// <summary>
+        /// Некоторое строковое значение.
+        /// </summary>
+        public string StringValue
+        {
+            get => _stringValue;
+
+            set => SetValue(ref _stringValue, value)
+                .Then(v => ChildWindowViewModel?.UpdateBaseViewModelValue(v));
+        }
+
+        #endregion
 
         #region Title : string - Заголовок окна
 
@@ -109,23 +133,73 @@ namespace QuadraticEquationSolver.ViewModels
 
         public double SecondRoot => _quadraticEquation.SecondRoot;
 
-        private string _strValue;
+        //private string _strValue;
 
-        //private SetValueResult<string> _value; - запрещено
+        ////private SetValueResult<string> _value; - запрещено
 
-        private object _value;
+        //private object _value;
 
-        public string StrValue
+        //public string StrValue
+        //{
+        //    get => _strValue;
+
+        //    set
+        //    {
+        //        SetValueResult<string> setValue = SetValue(ref _strValue, value);
+        //        setValue.UpdateProperty(nameof(Title));
+
+        //        //_value = setValue; - запрещено
+        //    }
+        //}
+
+        private ChildWindow _childWindow;
+
+        protected ChildWindowViewModel ChildWindowViewModel;
+
+        #region Command ShowChildWindowCommand - Команда для отображения дочернего окна
+
+        /// <summary>
+        /// Команда для отображения дочернего окна.
+        /// </summary>
+        private ICommand _showChildWindowCommand;
+
+        /// <summary>
+        /// Команда для отображения дочернего окна.
+        /// </summary>
+        public ICommand ShowChildWindowCommand => _showChildWindowCommand ??=
+            new RelayCommand(OnShowChildWindowCommandExecuted, CanShowChildWindowCommandExecute);
+
+        /// <summary>
+        /// Проверка возможности выполнения - Команда для отображения дочернего окна.
+        /// </summary>
+        private bool CanShowChildWindowCommandExecute(object p) => ChildWindowViewModel is null;
+
+        /// <summary>
+        /// Логика выполнения - Команда для отображения дочернего окна.
+        /// </summary>
+        private void OnShowChildWindowCommandExecuted(object p)
         {
-            get => _strValue;
+            var childWindowViewModel = new ChildWindowViewModel(this);
 
-            set
+            var childWindow = new ChildWindow
             {
-                SetValueResult<string> setValue = SetValue(ref _strValue, value);
-                setValue.UpdateProperty(nameof(Title));
+                DataContext = childWindowViewModel,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
 
-                //_value = setValue; - запрещено
-            }
+            childWindow.Closed += (_, _) =>
+            {
+                ChildWindowViewModel = null;
+                _childWindow = null;
+            };
+
+            ChildWindowViewModel = childWindowViewModel;
+            _childWindow = childWindow;
+
+            childWindow.Show();
         }
+
+        #endregion
     }
 }
