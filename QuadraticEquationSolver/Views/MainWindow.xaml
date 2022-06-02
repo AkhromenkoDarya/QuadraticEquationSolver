@@ -6,16 +6,66 @@
         xmlns:l="clr-namespace:QuadraticEquationSolver"
         xmlns:vm="clr-namespace:QuadraticEquationSolver.ViewModels"
         Title="{Binding Title}" 
-        Width="800" Height="450">
+        Width="500" Height="300">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <ControlTemplate x:Key="ValidationFailed">
+            <StackPanel Orientation="Horizontal">
+                <Border BorderThickness="2" BorderBrush="Red">
+                    <AdornedElementPlaceholder/>
+                </Border>
+                <TextBlock Foreground="Red" FontWeight="Bold" Text="!"/>
+            </StackPanel>
+        </ControlTemplate>
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="Background" Value="#FF937A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <StackPanel Margin="20">
+        <!--<StackPanel Margin="20">
             <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="{Binding TitleLength, StringFormat='Title length: {0} characters'}"/>
             <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="{Binding UserName, StringFormat='User name : {0}'}"/>
+        </StackPanel>-->
+        <StackPanel Margin="20">
+            <TextBlock HorizontalAlignment="Center">
+                a <Run FontWeight="Bold">x</Run>
+                <Run BaselineAlignment="Superscript" FontSize="9">2</Run>
+                + b <Run FontWeight="Bold">x</Run> + c = 0
+            </TextBlock>
+            <UniformGrid Columns="3" Margin="0,5">
+                <DockPanel Margin="0,0,10,0">
+                    <TextBlock Text="a =" Margin="0,0,3,0"/>
+                    <TextBox Text="{Binding A, UpdateSourceTrigger=PropertyChanged,
+                        ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" 
+                             Validation.ErrorTemplate="{StaticResource ValidationFailed}"/>
+                </DockPanel>
+                <DockPanel Margin="10,0">
+                    <TextBlock Text="b =" Margin="0,0,3,0"/>
+                    <TextBox Text="{Binding B, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <DockPanel Margin="10,0,0,0">
+                    <TextBlock Text="c =" Margin="0,0,3,0"/>
+                    <TextBox Text="{Binding C, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+            </UniformGrid>
+            <UniformGrid Columns="2" Margin="0,10">
+                <TextBlock>
+                    x<Run BaselineAlignment="Bottom" FontSize="9">1</Run>
+                    <TextBlock Text="{Binding FirstRoot, StringFormat=' = {0}'}"/>
+                </TextBlock>
+                <TextBlock>
+                    x<Run BaselineAlignment="Bottom" FontSize="9">2</Run>
+                    <TextBlock Text="{Binding SecondRoot, StringFormat=' = {0}'}"/>
+                </TextBlock>
+            </UniformGrid>
         </StackPanel>
     </Grid>
 </Window>

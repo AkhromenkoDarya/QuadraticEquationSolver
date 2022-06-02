@@ -1,12 +1,12 @@
 ﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 
 namespace QuadraticEquationSolver.ViewModels.Base
 {
-    internal class ViewModel : INotifyPropertyChanged
+    internal abstract partial class ViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -24,6 +24,55 @@ namespace QuadraticEquationSolver.ViewModels.Base
             }
 
             field = value;
+            OnPropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected virtual bool Set<T>(ref T field, T value, Func<T, bool> validator,
+            [CallerMemberName] string propertyName = null!)
+        {
+            if (Equals(field, value) || !validator(value))
+            {
+                return false;
+            }
+
+            field = value;
+            OnPropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected virtual bool Set<T>(ref T field, T value, string? validationErrorMessage, 
+            Func<T, bool> validator, [CallerMemberName] string propertyName = null!)
+        {
+            if (Equals(field, value))
+            {
+                return false;
+            }
+
+            if (!validator(value))
+            {
+                throw new ArgumentException(
+                    validationErrorMessage ?? $"{propertyName} property data validation error", 
+                    nameof(value));
+            }
+
+            field = value;
+            OnPropertyChanged(propertyName);
+
+            return true;
+        }
+
+        protected virtual bool Set<T>(T value, T oldValue, Action<T> setter, 
+            [CallerMemberName] string propertyName = null!)
+        {
+            if (Equals(oldValue, value))
+            {
+                return false;
+            }
+
+            setter(value);
             OnPropertyChanged(propertyName);
 
             return true;
