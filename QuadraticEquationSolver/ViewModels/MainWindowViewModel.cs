@@ -1,4 +1,7 @@
-﻿using QuadraticEquationSolver.Models;
+﻿using System;
+using System.Diagnostics;
+using QuadraticEquationSolver.Infrastructure.Attributes;
+using QuadraticEquationSolver.Models;
 using QuadraticEquationSolver.ViewModels.Base;
 
 namespace QuadraticEquationSolver.ViewModels
@@ -21,17 +24,17 @@ namespace QuadraticEquationSolver.ViewModels
         {
             get => _title;
 
-            set
-            {
-                if (Set(ref _title, value, title => !string.IsNullOrWhiteSpace(title)))
-                {
-                    OnPropertyChanged(nameof(TitleLength));
-                }
-            }
+            set => SetValue(ref _title, value)
+                //.Then(v => OnPropertyChanged(nameof(TitleLength)))
+                .UpdateProperty(nameof(TitleLength))
+                .Then(v => Debug.WriteLine("The window title is set to \"{0}\"", value))
+                .ThenIf(v => !string.IsNullOrWhiteSpace(value), v => 
+                    Debug.WriteLine("Non-empty window title value"));
         }
 
         #endregion
 
+        [DependencyOn(nameof(Title))]
         public int TitleLength => Title.Length;
 
         public string UserName
@@ -46,18 +49,27 @@ namespace QuadraticEquationSolver.ViewModels
         { 
             get => _a;
 
-            set
-            {
-                if (!Set(ref _a, value, "The value must be greater than or equal to zero", 
-                        a => a >= 0))
-                {
-                    return;
-                }
+            //set
+            //{
+            //    if (!Set(ref _a, value, "The value must be greater than or equal to zero", 
+            //            a => a >= 0))
+            //    {
+            //        return;
+            //    }
 
-                _quadraticEquation.A = value;
-                OnPropertyChanged(nameof(FirstRoot));
-                OnPropertyChanged(nameof(SecondRoot));
-            }
+            //    _quadraticEquation.A = value;
+            //    OnPropertyChanged(nameof(FirstRoot));
+            //    OnPropertyChanged(nameof(SecondRoot));
+            //}
+
+            set => SetValue(ref _a, value)
+                .ThenIf(
+                    (oldValue, newValue) => Math.Abs(oldValue - newValue) > 0.001,
+                    v =>
+                    {
+                        OnPropertyChanged(nameof(FirstRoot));
+                        OnPropertyChanged(nameof(SecondRoot));
+                    });
         }
 
         public double B
@@ -96,5 +108,24 @@ namespace QuadraticEquationSolver.ViewModels
         public double FirstRoot => _quadraticEquation.FirstRoot;
 
         public double SecondRoot => _quadraticEquation.SecondRoot;
+
+        private string _strValue;
+
+        //private SetValueResult<string> _value; - запрещено
+
+        private object _value;
+
+        public string StrValue
+        {
+            get => _strValue;
+
+            set
+            {
+                SetValueResult<string> setValue = SetValue(ref _strValue, value);
+                setValue.UpdateProperty(nameof(Title));
+
+                //_value = setValue; - запрещено
+            }
+        }
     }
 }
